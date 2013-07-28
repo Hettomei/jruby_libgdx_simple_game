@@ -26,7 +26,6 @@ class Drop
 
   def create
     # load the images for the droplet and the bucket, 64x64 pixels each
-    puts 'in create'
     @drop_image = Texture.new(Gdx.files.internal("gfx/droplet.png"))
     @bucket_image = Texture.new(Gdx.files.internal("gfx/bucket.png"))
 
