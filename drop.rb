@@ -30,6 +30,14 @@ class Drop
     @drop_image = Texture.new(Gdx.files.internal("gfx/droplet.png"))
     @bucket_image = Texture.new(Gdx.files.internal("gfx/bucket.png"))
 
+    # load the drop sound effect and the rain background "music"
+    @drop_sound = Gdx.audio.new_sound Gdx.files.internal("sfx/drop.wav")
+    @rain_music = Gdx.audio.new_music Gdx.files.internal("sfx/rain.mp3")
+
+    # start the playback of the background music immediately
+    @rain_music.set_looping true
+    @rain_music.play
+
     @camera = OrthographicCamera.new
     @camera.set_to_ortho(false, 800, 480)
     @batch = SpriteBatch.new
@@ -41,7 +49,7 @@ class Drop
     @bucket.height = 64
 
     @raindrops = []
-    @lastDropTime = 0
+    @last_drop_time = 0
     spawn_raindrop
   end
 
@@ -52,7 +60,7 @@ class Drop
     raindrop.width = 64
     raindrop.height = 64
     @raindrops << raindrop
-    @last_drop_time = TimeUtils.nanoTime()
+    @last_drop_time = TimeUtils.nano_time
   end
 
   def render
@@ -83,7 +91,7 @@ class Drop
     @bucket.x = 0 if @bucket.x < 0
     @bucket.x = 800 - 64 if @bucket.x > 800 - 64
 
-    spawn_raindrop if(TimeUtils.nanoTime() - @last_drop_time > 1000000000)
+    spawn_raindrop if(TimeUtils.nano_time - @last_drop_time > 1000000000)
 
     to_delete = []
     @raindrops.each do |raindrop|
@@ -92,6 +100,7 @@ class Drop
         to_delete << raindrop
       end
       if raindrop.overlaps(@bucket)
+        @drop_sound.play
         to_delete << raindrop
       end
     end
